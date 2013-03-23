@@ -1,0 +1,50 @@
+
+() <- $(document).ready!
+    
+    baseLayer = L.tileLayer(
+        'http://{s}.tile.cloudmade.com/ad132e106cd246ec961bbdfbe0228fe8/997/256/{z}/{x}/{y}.png', 
+            attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://cloudmade.com">CloudMade</a>',
+            maxZoom: 18
+    )
+
+    heatmapLayer = L.TileLayer.heatMap(
+        radius: 20,
+        opacity: 0.8,
+        gradient:
+            0.45: "rgb(0,0,255)",
+            0.55: "rgb(0,255,255)",
+            0.65: "rgb(0,255,0)",
+            0.95: "yellow",
+            1.0: "rgb(255,0,0)"
+    )
+
+    #heatmapLayer.addData(testData.data)
+
+    overlayMaps =
+        'Heatmap': heatmapLayer
+    
+    controls = L.control.layers(null, overlayMaps, {collapsed: false})
+    
+    map = new L.Map('heatmap', 
+        center: new L.LatLng(51.505, -0.09),
+        zoom: 2,
+        layers: [baseLayer, heatmapLayer]
+    )
+    
+    controls.addTo(map)
+    
+    redraw_count = 0
+    socket = io.connect('http://cml10.csie.ntu.edu.tw:8080')
+    (data) <- socket.on('tweet', _)
+        heatmapLayer.addDataPoint({lat: data[1], lon: data[0], value: 1});
+        #console.log(data);
+ 
+    #() <- setTimeout(_, 1000)
+    #    heatmapLayer.redraw!
+    
+    () <- setInterval(_, 1000)
+        heatmapLayer.redraw!
+        #if (redraw_count++ > 100)
+        #    heatmapLayer.clearData!
+        #    redraw_count = 0
+ 

@@ -1,0 +1,26 @@
+!!!5
+html(lang="zh-TW")
+  head
+    title Twitter Heapmap
+    meta(charset="utf-8")
+    meta(name="viewport", content="width=device-width, initial-scale=1.0")
+    //link(rel='stylesheet', href='http://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/2.2.2/css/bootstrap.min.css')
+    link(rel='stylesheet', href='/stylesheets/bootstrap.css')
+    link(rel='stylesheet', href='/stylesheets/bootstrap-responsive.css')
+    link(rel='stylesheet', href='/stylesheets/style.css')
+    link(rel='stylesheet', href='http://cdn.leafletjs.com/leaflet-0.4.4/leaflet.css')
+  body
+    .container-fluid.main-content
+      .row-fluid
+        .span8.offset2
+          block content
+    footer
+  script(src='/javascript/jquery-1.7.2.min.js', type='text/javascript')
+  //script(src='http://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/2.3.0/bootstrap.min.js', type='text/javascript')
+  script(src='/javascript/bootstrap.min.js', type='text/javascript')
+  script(src='/javascript/app.js', type='text/javascript')
+  script(src='/socket.io/socket.io.js', type='text/javascript')
+  script(src='http://cdn.leafletjs.com/leaflet-0.4.4/leaflet-src.js', type='text/javascript')
+  script(src='/javascript/heatmap.js', type='text/javascript')
+  script(src='/javascript/heatmap-leaflet.js', type='text/javascript')
+ 

@@ -1,0 +1,56 @@
+
+express = require('express')
+stylus = require('stylus')
+nib = require('nib')
+util = require('util')
+redis = require('redis')
+
+cli = require('cli')
+
+#options = cli.parse
+#    db_path: ['d', 'SQLite database path', 'string']
+
+redis_client = redis.createClient!
+
+app = express()
+
+server = require('http').createServer(app)
+io = require('socket.io').listen(server)
+
+socket_clients = []
+
+(socket) <- io.sockets.on('connection', _)
+    socket_clients.push(socket)
+
+(channel, message) <- redis_client.on("message", _)
+    console.log("redis client channel " + channel + ": " + message)
+
+    for socket in socket_clients
+        socket.emit('tweet', message.split(':'))
+
+
+compile = (str, path) ->
+    return stylus(str).set('filename', path).use(nib())
+
+app.set('views', __dirname + '/views')
+app.set('view engine', 'jade')
+app.set('view options', { layout: false })
+app.use(express.logger())
+app.use(express.bodyParser())
+app.use(express.cookieParser())
+app.use(express.session(secret: "moe"))
+
+app.use(stylus.middleware { src: __dirname + '/public', compile: compile})
+app.use(express.static(__dirname + '/public'))
+
+(error, req, res, next) <- app.use!
+    console.log(error)
+    res.send(500, {error: util.inspect(error)})
+
+(req, res) <- app.get('/', _)
+
+    res.render('index')        
+    
+server.listen(8080)
+redis_client.subscribe('ori_tweets')
+
