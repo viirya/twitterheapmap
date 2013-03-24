@@ -33,18 +33,10 @@
     
     controls.addTo(map)
     
-    redraw_count = 0
     socket = io.connect('http://cml10.csie.ntu.edu.tw:8080')
     (data) <- socket.on('tweet', _)
-        heatmapLayer.addDataPoint({lat: data[1], lon: data[0], value: 1});
-        #console.log(data);
- 
-    #() <- setTimeout(_, 1000)
-    #    heatmapLayer.redraw!
+        heatmapLayer.addDataPoint({grp_lat: data[1], grp_lon: data[0], lat: data[3], lon: data[2], value: data[4]});
     
-    () <- setInterval(_, 1000)
+    () <- setInterval(_, 100)
         heatmapLayer.redraw!
-        #if (redraw_count++ > 100)
-        #    heatmapLayer.clearData!
-        #    redraw_count = 0
  

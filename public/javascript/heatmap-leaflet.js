@@ -46,15 +46,32 @@
     },
 
     addDataPoint: function(point) {
-        this._data.push(point);
         this._cache.max = this._calculateMaxValue(this._data);
-        //console.log("this._cache.max: " + this._cache.max);
-        //console.log(this._data.length);
+        var replace = false;
+        data = [];
+        if (this._data.length > 0) {
+            for (var i = 0, l = this._data.length; i < l; i++) {
+                if (point.lon == this._data[i].lon && point.lat == this._data[i].lat) {
+                    this._data[i].lat = point.lat;
+                    this._data[i].lon = point.lon;
+                    this._data[i].value = point.value;
+                    if (this._data[i].value > 0) {
+                        data.push(this._data[i]);
+                    }
+                    replace = true;
+                } else {
+                    data.push(this._data[i]);
+                }
+            }
+        }
+        if (!replace) {
+            data.push(point);
+        }
+        this._data = data;
         if (this._data.length >= 1000) {
             //this._data = this._data.splice(10, 99);
             this._data.shift();
         }
-        //console.log(this._data.length);
     },
 
     // Add a dataset to be drawn. You might want to redraw() if you had previeous datasets.
