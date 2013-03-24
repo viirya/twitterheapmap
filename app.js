@@ -58,7 +58,7 @@
   app.use(express.cookieParser());
 
   app.use(express.session({
-    secret: "moe"
+    secret: "tweetheapmap"
   }));
 
   app.use(stylus.middleware({
@@ -81,6 +81,6 @@
 
   server.listen(8080);
 
-  redis_client.subscribe('ori_tweets');
+  redis_client.subscribe('tweets');
 
 }).call(this);
