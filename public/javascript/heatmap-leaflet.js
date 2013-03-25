@@ -46,31 +46,32 @@
     },
 
     addDataPoint: function(point) {
-        this._cache.max = this._calculateMaxValue(this._data);
         var replace = false;
-        data = [];
         if (this._data.length > 0) {
             for (var i = 0, l = this._data.length; i < l; i++) {
-                if (point.lon == this._data[i].lon && point.lat == this._data[i].lat) {
+                if (point.grp_lon == this._data[i].grp_lon && point.grp_lat == this._data[i].grp_lat) {
                     this._data[i].lat = point.lat;
                     this._data[i].lon = point.lon;
                     this._data[i].value = point.value;
-                    if (this._data[i].value > 0) {
-                        data.push(this._data[i]);
-                    }
+
                     replace = true;
-                } else {
-                    data.push(this._data[i]);
+
+                    if (this._data[i].value <= 0) {
+                        this._data.splice(i, 1);
+                        break;
+                    }
                 }
             }
         }
         if (!replace) {
-            data.push(point);
+            this._data.push(point);
         }
-        this._data = data;
-        if (this._data.length >= 1000) {
-            //this._data = this._data.splice(10, 99);
+        if (this._data.length >= 2000) {
             this._data.shift();
+        }
+        this._cache.max = this._calculateMaxValue(this._data);
+        if (this._cache.max == 1) {
+          this._cache.max = 2;
         }
     },
 
