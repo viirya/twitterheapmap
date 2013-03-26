@@ -178,12 +178,18 @@
         if (this.options.maxPerView) {
             var dataset = [];
             var mapBounds = this._map.getBounds();
+            if (typeof this.prev_bound != undefined && mapBounds.equals(this.prev_bound)) {
+                return this.data_max;
+            } else {
+                this.prev_bound = mapBounds;
+            }
             this._data.forEach(function(item){
-                if (mapBounds.contains([item.lat, item.lon])) {
+                if (mapBounds.contains(new L.LatLng(item.lat, item.lon))) {
                     dataset.push(item);
-                };
+                }
             });
-            return this._calculateMaxValue(dataset)
+            this.data_max = this._calculateMaxValue(dataset);
+            return this.data_max > 1 ? this.data_max : 2;
         } else {
             return this._cache.max;
         }
