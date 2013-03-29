@@ -32,12 +32,16 @@
     controls.addTo(map);
     socket = io.connect('http://cml10.csie.ntu.edu.tw:8080');
     socket.on('tweet', function(data) {
+      var tokens;
+      tokens = data[1];
+      data = data[0];
       return heatmapLayer.addDataPoint({
         grp_lat: data[1],
         grp_lon: data[0],
         lat: data[3],
         lon: data[2],
-        value: data[4]
+        value: data[4],
+        tokens: tokens
       });
     });
     return setInterval(function() {

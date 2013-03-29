@@ -4,6 +4,11 @@ stylus = require('stylus')
 nib = require('nib')
 util = require('util')
 redis = require('redis')
+natural = require('natural')
+stopwords = require('./lib/stopwords.js')
+
+tokenizer = new natural.WordTokenizer!
+TfIdf = natural.TfIdf
 
 cli = require('cli')
 
@@ -21,12 +26,30 @@ socket_clients = []
 
 (socket) <- io.sockets.on('connection', _)
     socket_clients.push(socket)
+ 
+tfidf = new TfIdf()
+messages = []
+() <- setInterval(_, 30000)
+    messages = []
+    tfidf = new TfIdf()
 
 (channel, message) <- redis_client.on("message", _)
-    console.log("redis client channel " + channel + ": " + message)
+
+    parts_msg = message.split("\t")
+
+    console.log("redis client channel " + channel + ": " + parts_msg[0])
+
+    tokens = tokenizer.tokenize(parts_msg[1].toLowerCase!)
+    tokens = stopwords.stripStopWords(tokens)
+
+    #tfidf.addDocument(parts_msg[1].toLowerCase!)
+   
+    #token_scores = [] 
+    #(token) <- tokens.forEach!
+    #    token_scores.push({token: token, score: tfidf.tfidf(token, tfidf.documents.length - 1)})
 
     for socket in socket_clients
-        socket.emit('tweet', message.split(':'))
+        socket.emit('tweet', [parts_msg[0].split(':'), tokens])
 
 
 compile = (str, path) ->

@@ -12,8 +12,13 @@ html(lang="zh-TW")
   body
     .container-fluid.main-content
       .row-fluid
-        .span8.offset2
+        .span8.offset1
           block content
+        .span3.terms
+          h1 Focus terms:
+          input(id="focus", autofocus)
+          h1 Frequent terms:
+          .toptokens 
     footer
   script(src='/javascript/jquery-1.7.2.min.js', type='text/javascript')
   //script(src='http://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/2.3.0/bootstrap.min.js', type='text/javascript')

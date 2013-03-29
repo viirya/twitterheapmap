@@ -102,6 +102,7 @@ a img {
 body {
   background-color: #faf9f0;
   color: #444;
+  font-family: "Monaco", "Helvetica", "Times New Roman";
 }
 header {
   margin-bottom: 20px;
@@ -134,8 +135,17 @@ header span {
 .main-content p {
   margin-bottom: 20px;
 }
-.main-content .query {
+.main-content .terms {
+  height: 800px;
+}
+.main-content .terms h1 {
+  font-size: 22px;
+  margin: 10px 0 10px 0;
+}
+.main-content .terms .toptokens {
+  margin: 10px;
   font-size: 20px;
+  display: block;
 }
 p {
   line-height: 1.8;

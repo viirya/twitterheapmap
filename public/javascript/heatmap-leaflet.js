@@ -54,6 +54,8 @@
                     this._data[i].lon = point.lon;
                     this._data[i].value = point.value;
 
+                    this._data[i].tokens = $.extend(this._data[i].tokens, point.tokens);
+
                     replace = true;
 
                     if (this._data[i].value <= 0) {
@@ -173,6 +175,38 @@
         return bounds.contains([localXY.x, localXY.y]);
     },
 
+    _getTokensInBound: function() {
+        var dataset = new Object;
+        var mapBounds = this._map.getBounds();
+        this._data.forEach(function(item){
+            if (mapBounds.contains(new L.LatLng(item.lat, item.lon))) {
+                item.tokens.forEach(function(token) {
+                    dataset[token] = token in dataset ? dataset[token] + 1 : 1;
+                });
+            }
+        });
+        //console.log(dataset);
+        this._tokensinbound = dataset;
+        return dataset;
+    },
+
+    _getMaxFreqToken: function() {
+        var tuples = []
+        if ("_tokensinbound" in this) {
+            for (var token in this._tokensinbound) {
+                tuples.push([token, this._tokensinbound[token]]);
+            }
+            tuples.sort(function(a, b) {
+                a = a[1];
+                b = b[1];
+
+                return a < b ? 1 : (a > b ? -1 : 0);
+            });
+ 
+        }
+        return tuples === [] ? [] : tuples.slice(0, 10);
+    },
+
     // get the max value of the dataset
     _getMaxValue: function() {
         if (this.options.maxPerView) {
@@ -218,7 +252,7 @@
                 var lonlat = [this._data[i].lon, this._data[i].lat];
                 var localXY = this._tilePoint(ctx, lonlat);
 
-                if (this._isInTile(localXY)) {
+                if (this._isInTile(localXY) && ($('#focus').val() == '' || this._data[i].tokens.indexOf($('#focus').val()) != -1)) {
                     pointsInTile.push({
                         x: localXY.x,
                         y: localXY.y,
@@ -228,6 +262,14 @@
             }
         }
 
+        this._getTokensInBound();
+        var top_tokens = this._getMaxFreqToken();
+
+        var freq_tokens = "";
+        top_tokens.forEach(function(token) {
+            freq_tokens = freq_tokens + "\n" + '<li>' + token[0] + '</li>';
+        });
+        $('.toptokens').html('<ol>' + freq_tokens + '</ol>');
 
         heatmap.store.setDataSet({max: this._getMaxValue(), data: pointsInTile});
 
