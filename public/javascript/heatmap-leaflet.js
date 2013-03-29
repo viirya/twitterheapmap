@@ -267,7 +267,7 @@
 
         var freq_tokens = "";
         top_tokens.forEach(function(token) {
-            freq_tokens = freq_tokens + "\n" + '<li>' + token[0] + '</li>';
+            freq_tokens = freq_tokens + "\n" + '<li>' + token[0] + ': ' + token[1] + '</li>';
         });
         $('.toptokens').html('<ol>' + freq_tokens + '</ol>');
 

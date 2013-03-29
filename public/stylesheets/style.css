@@ -138,9 +138,13 @@ header span {
 .main-content .terms {
   height: 800px;
 }
-.main-content .terms h1 {
+.main-content .terms h1.focus {
   font-size: 22px;
-  margin: 10px 0 10px 0;
+  margin: 0 0 10px 0;
+}
+.main-content .terms h1.freq {
+  margin: 20px 0 10px 0;
+  font-size: 22px;
 }
 .main-content .terms .toptokens {
   margin: 10px;
