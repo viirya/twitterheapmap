@@ -31,13 +31,15 @@
                 tile: tile,
                 tilePoint: tilePoint,
                 zoom: zoom,
-                heatmap: tile.heatmap
+                heatmap: tile.heatmap,
+                canvas: tile['childNodes'][0],
             };
+
+            this._draw(ctx);
 
             if (this.options.debug) {
                 this._drawDebugInfo(ctx);
             }
-            this._draw(ctx);
         };
     },
 
@@ -111,12 +113,7 @@
     },
 
     _drawDebugInfo: function (ctx) {
-        var canvas = L.DomUtil.create('canvas', 'leaflet-tile-debug');
         var tileSize = this.options.tileSize;
-        canvas.width = tileSize;
-        canvas.height = tileSize;
-        ctx['tile'].appendChild(canvas);
-        ctx['canvas'] = canvas;
 
         var max = tileSize;
         var g = ctx.canvas.getContext('2d');
@@ -124,12 +121,12 @@
         g.fillStyle = '#FFFF00';
         g.strokeRect(0, 0, max, max);
         g.font = "12px Arial";
-        g.fillRect(0, 0, 5, 5);
+        g.fillRect(0, 0, 5, 5); // draw four rects in four corner
         g.fillRect(0, max - 5, 5, 5);
         g.fillRect(max - 5, 0, 5, 5);
         g.fillRect(max - 5, max - 5, 5, 5);
-        g.fillRect(max / 2 - 5, max / 2 - 5, 10, 10);
-        g.strokeText(ctx.tilePoint.x + ' ' + ctx.tilePoint.y + ' ' + ctx.zoom, max / 2 - 30, max / 2 - 10);
+        g.fillRect(max / 2 - 5, max / 2 - 5, 10, 10); // draw rect in center
+        g.fillText(ctx.tilePoint.x + ' ' + ctx.tilePoint.y + ' ' + ctx.zoom, max / 2 - 30, max / 2 - 10);
 
         this._drawPoint(ctx, [0,0])
     },
@@ -252,6 +249,7 @@
                 var lonlat = [this._data[i].lon, this._data[i].lat];
                 var localXY = this._tilePoint(ctx, lonlat);
 
+
                 if (this._isInTile(localXY) && ($('#focus').val() == '' || this._data[i].tokens.indexOf($('#focus').val()) != -1)) {
                     pointsInTile.push({
                         x: localXY.x,
@@ -269,7 +267,7 @@
         top_tokens.forEach(function(token) {
             freq_tokens = freq_tokens + "\n" + '<li>' + token[0] + ': ' + token[1] + '</li>';
         });
-        $('.toptokens').html('<ol>' + freq_tokens + '</ol>');
+        //$('.toptokens').html('<ol>' + freq_tokens + '</ol>');
 
         heatmap.store.setDataSet({max: this._getMaxValue(), data: pointsInTile});
 
