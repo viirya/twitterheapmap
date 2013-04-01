@@ -36,7 +36,7 @@
             };
 
             this._draw(ctx);
-
+            this._drawFreqTerms(ctx);
             if (this.options.debug) {
                 this._drawDebugInfo(ctx);
             }
@@ -48,6 +48,9 @@
     },
 
     addDataPoint: function(point) {
+        if (point.lat == 0.0 && point.lon == 0.0) {
+            return;
+        }
         var replace = false;
         if (this._data.length > 0) {
             for (var i = 0, l = this._data.length; i < l; i++) {
@@ -110,6 +113,32 @@
         tile.heatmap = h337.create(config);
 
         return tile;
+    },
+
+    _drawFreqTerms: function (ctx) {
+
+        this._getTokensInBound();
+        var top_tokens = this._getMaxFreqToken();
+ 
+        var font_size = 60 * (this._map.getZoom() / 18);
+
+        var g = ctx.canvas.getContext('2d');
+        g.strokeStyle = '#000000';
+        g.fillStyle = '#000000';
+        g.font = font_size + "px Arial Bold";
+
+        for (var region in top_tokens) {
+            var lat = parseFloat(region.split(':')[0]);
+            var lon = parseFloat(region.split(':')[1]);
+            var lonlat = [lon, lat];
+            var localXY = this._tilePoint(ctx, lonlat);
+
+            var text = [];
+            top_tokens[region].forEach(function(token) {
+                text.push(token[0]);
+            });
+            g.fillText('"' + text.join(',') + '"', localXY.x, localXY.y);
+        }
     },
 
     _drawDebugInfo: function (ctx) {
@@ -177,8 +206,11 @@
         var mapBounds = this._map.getBounds();
         this._data.forEach(function(item){
             if (mapBounds.contains(new L.LatLng(item.lat, item.lon))) {
+                if (!(item.lat + ':' + item.lon in dataset)) {
+                    dataset[item.lat + ':' + item.lon] = new Object;
+                }
                 item.tokens.forEach(function(token) {
-                    dataset[token] = token in dataset ? dataset[token] + 1 : 1;
+                    dataset[item.lat + ':' + item.lon][token] = token in dataset ? dataset[item.lat + ':' + item.lon][token] + 1 : 1;
                 });
             }
         });
@@ -188,20 +220,25 @@
     },
 
     _getMaxFreqToken: function() {
-        var tuples = []
+        var tuples = new Object;
         if ("_tokensinbound" in this) {
-            for (var token in this._tokensinbound) {
-                tuples.push([token, this._tokensinbound[token]]);
+            for (var region in this._tokensinbound) {
+                tuples[region] = [];
+                for (var token in this._tokensinbound[region]) {
+                    tuples[region].push([token, this._tokensinbound[region][token]]);
+                }
+                if (tuples[region] !== []) {
+                    tuples[region].sort(function(a, b) {
+                        a = a[1];
+                        b = b[1];
+                    
+                        return a < b ? 1 : (a > b ? -1 : 0);
+                    });
+                    tuples[region] = tuples[region].slice(0, 2);
+                }
             }
-            tuples.sort(function(a, b) {
-                a = a[1];
-                b = b[1];
-
-                return a < b ? 1 : (a > b ? -1 : 0);
-            });
- 
         }
-        return tuples === [] ? [] : tuples.slice(0, 10);
+        return tuples;
     },
 
     // get the max value of the dataset
@@ -259,15 +296,6 @@
                 };
             }
         }
-
-        this._getTokensInBound();
-        var top_tokens = this._getMaxFreqToken();
-
-        var freq_tokens = "";
-        top_tokens.forEach(function(token) {
-            freq_tokens = freq_tokens + "\n" + '<li>' + token[0] + ': ' + token[1] + '</li>';
-        });
-        //$('.toptokens').html('<ol>' + freq_tokens + '</ol>');
 
         heatmap.store.setDataSet({max: this._getMaxValue(), data: pointsInTile});
 
