@@ -36,7 +36,11 @@
             };
 
             this._draw(ctx);
-            this._drawFreqTerms(ctx);
+
+            if (this._map.getZoom() >= 8) {
+                this._drawFreqTerms(ctx);
+            }
+
             if (this.options.debug) {
                 this._drawDebugInfo(ctx);
             }
