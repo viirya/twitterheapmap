@@ -124,7 +124,7 @@
         this._getTokensInBound();
         var top_tokens = this._getMaxFreqToken();
  
-        var font_size = 60 * (this._map.getZoom() / 18);
+        var font_size = 40 * (this._map.getZoom() / 18);
 
         var g = ctx.canvas.getContext('2d');
         g.strokeStyle = '#000000';
@@ -141,7 +141,9 @@
             top_tokens[region].forEach(function(token) {
                 text.push(token[0]);
             });
-            g.fillText('"' + text.join(',') + '"', localXY.x, localXY.y);
+            if (text.length > 0) {
+                g.fillText('"' + text.join(',') + '"', localXY.x, localXY.y);
+            }
         }
     },
 

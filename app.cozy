@@ -8,6 +8,7 @@ natural = require('natural')
 stopwords = require('./lib/stopwords.js')
 
 tokenizer = new natural.WordTokenizer!
+regex_tokenizer = new natural.RegexpTokenizer({pattern: /\s/})
 TfIdf = natural.TfIdf
 
 cli = require('cli')
@@ -39,7 +40,7 @@ messages = []
 
     console.log("redis client channel " + channel + ": " + parts_msg[0])
 
-    tokens = tokenizer.tokenize(parts_msg[1].toLowerCase!)
+    tokens = regex_tokenizer.tokenize(parts_msg[1].toLowerCase!)
     tokens = stopwords.stripStopWords(tokens)
 
     #tfidf.addDocument(parts_msg[1].toLowerCase!)
