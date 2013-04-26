@@ -17,6 +17,29 @@ html(lang="zh-TW")
         .span3.terms
           h1.focus Focus terms:
           input(id="focus", autofocus)
+          h1.focus Tweet predicted type:
+          select(id="show_label")
+            option(value="", selected) All tweets
+            option(value="alt.atheism") alt.atheism
+            option(value="comp.graphics") comp.graphics
+            option(value="comp.os.ms-windows.misc") comp.os.ms-windows.misc
+            option(value="comp.sys.ibm.pc.hardware") comp.sys.ibm.pc.hardware
+            option(value="comp.sys.mac.hardware") comp.sys.mac.hardware
+            option(value="comp.windows.x") comp.windows.x
+            option(value="misc.forsale") misc.forsale
+            option(value="rec.autos") rec.autos
+            option(value="rec.motorcycles") rec.motorcycles
+            option(value="rec.sport.baseball") rec.sport.baseball
+            option(value="rec.sport.hockey") rec.sport.hockey
+            option(value="sci.crypt") sci.crypt
+            option(value="sci.electronics") sci.electronics
+            option(value="sci.med") sci.med
+            option(value="sci.space") sci.space
+            option(value="soc.religion.christian") soc.religion.christian
+            option(value="talk.politics.guns") talk.politics.guns
+            option(value="talk.politics.mideast") talk.politics.mideast
+            option(value="talk.politics.misc") talk.politics.misc
+            option(value="talk.religion.misc") talk.religion.misc
     footer
   script(src='/javascript/jquery-1.7.2.min.js', type='text/javascript')
   //script(src='http://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/2.3.0/bootstrap.min.js', type='text/javascript')

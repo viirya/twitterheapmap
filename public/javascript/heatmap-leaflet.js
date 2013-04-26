@@ -65,6 +65,8 @@
 
                     this._data[i].tokens = $.extend(this._data[i].tokens, point.tokens);
 
+                    this._data[i].label = point.label;
+
                     replace = true;
 
                     if (this._data[i].value <= 0) {
@@ -293,7 +295,7 @@
                 var localXY = this._tilePoint(ctx, lonlat);
 
 
-                if (this._isInTile(localXY) && ($('#focus').val() == '' || this._data[i].tokens.indexOf($('#focus').val()) != -1)) {
+                if (this._isInTile(localXY) && ($('#focus').val() == '' || this._data[i].tokens.indexOf($('#focus').val()) != -1) && ($('#show_label').val() == '' || this._data[i].label === $('#show_label').val())) {
                     pointsInTile.push({
                         x: localXY.x,
                         y: localXY.y,

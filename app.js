@@ -52,13 +52,13 @@
   redis_client.on("message", function(channel, message) {
     var parts_msg, socket, tokens, _i, _len, _results;
     parts_msg = message.split("\t");
-    console.log("redis client channel " + channel + ": " + parts_msg[0]);
+    console.log("redis client channel " + channel + ": " + parts_msg[0] + ": " + parts_msg[2]);
     tokens = regex_tokenizer.tokenize(parts_msg[1].toLowerCase());
     tokens = stopwords.stripStopWords(tokens);
     _results = [];
     for (_i = 0, _len = socket_clients.length; _i < _len; _i++) {
       socket = socket_clients[_i];
-      _results.push(socket.emit('tweet', [parts_msg[0].split(':'), tokens]));
+      _results.push(socket.emit('tweet', [parts_msg[0].split(':'), tokens, parts_msg[2]]));
     }
     return _results;
   });
