@@ -124,7 +124,7 @@
     _drawFreqTerms: function (ctx) {
 
         this._getTokensInBound();
-        var top_tokens = this._getMaxFreqToken();
+        var top_tokens = this._getMaxFreqToken(($('#show_label').val() == '') ? 2 : 10);
  
         var font_size = 40 * (this._map.getZoom() / 18);
 
@@ -213,7 +213,7 @@
         var dataset = new Object;
         var mapBounds = this._map.getBounds();
         this._data.forEach(function(item){
-            if (mapBounds.contains(new L.LatLng(item.lat, item.lon))) {
+            if (mapBounds.contains(new L.LatLng(item.lat, item.lon)) && ($('#focus').val() == '' || item.tokens.indexOf($('#focus').val()) != -1) && ($('#show_label').val() == '' || item.label === $('#show_label').val())) {
                 if (!(item.lat + ':' + item.lon in dataset)) {
                     dataset[item.lat + ':' + item.lon] = new Object;
                 }
@@ -227,7 +227,7 @@
         return dataset;
     },
 
-    _getMaxFreqToken: function() {
+    _getMaxFreqToken: function(maxNumber) {
         var tuples = new Object;
         if ("_tokensinbound" in this) {
             for (var region in this._tokensinbound) {
@@ -242,7 +242,7 @@
                     
                         return a < b ? 1 : (a > b ? -1 : 0);
                     });
-                    tuples[region] = tuples[region].slice(0, 2);
+                    tuples[region] = tuples[region].slice(0, maxNumber);
                 }
             }
         }
