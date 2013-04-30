@@ -12,12 +12,17 @@ html(lang="zh-TW")
   body
     .container-fluid.main-content
       .row-fluid
+        .span11.offset1
+          .title Real-time Twitter Heatmap
+          p.desc This is a demo for processing Twitter stream data. We prepare the pre-trained classifiers for 20 newsgroups. You can select one of those classifiers at left menu to show only certain type of tweets on the heatmap. Once you zoom in the map at certain level, you can see tokenized words from user tweets.
+          p.desc Copyright (C) 2013 Liang-Chi Hsieh
+      .row-fluid
         .span8.offset1
           block content
         .span3.terms
           h1.focus Focus terms:
           input(id="focus", autofocus)
-          h1.focus Tweet predicted type:
+          h1.type Tweet predicted type:
           select(id="show_label")
             option(value="", selected) All tweets
             option(value="alt.atheism") alt.atheism
