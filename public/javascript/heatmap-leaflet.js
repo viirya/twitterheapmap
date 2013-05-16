@@ -66,6 +66,7 @@
                     this._data[i].tokens = $.extend(this._data[i].tokens, point.tokens);
 
                     this._data[i].label = point.label;
+                    this._data[i].sentiment = point.sentiment;
 
                     replace = true;
 
@@ -124,7 +125,7 @@
     _drawFreqTerms: function (ctx) {
 
         this._getTokensInBound();
-        var top_tokens = this._getMaxFreqToken(($('#show_label').val() == '') ? 2 : 10);
+        var top_tokens = this._getMaxFreqToken(($('#show_label').val() == '' && $('#show_sentiment').val() == '') ? 2 : 10);
  
         var font_size = 40 * (this._map.getZoom() / 18);
 
@@ -213,7 +214,7 @@
         var dataset = new Object;
         var mapBounds = this._map.getBounds();
         this._data.forEach(function(item){
-            if (mapBounds.contains(new L.LatLng(item.lat, item.lon)) && ($('#focus').val() == '' || item.tokens.indexOf($('#focus').val()) != -1) && ($('#show_label').val() == '' || item.label === $('#show_label').val())) {
+            if (mapBounds.contains(new L.LatLng(item.lat, item.lon)) && ($('#focus').val() == '' || item.tokens.indexOf($('#focus').val()) != -1) && ($('#show_label').val() == '' || item.label === $('#show_label').val()) && ($('#show_sentiment').val() == '' || item.sentiment === $('#show_sentiment').val())) {
                 if (!(item.lat + ':' + item.lon in dataset)) {
                     dataset[item.lat + ':' + item.lon] = new Object;
                 }
@@ -295,7 +296,7 @@
                 var localXY = this._tilePoint(ctx, lonlat);
 
 
-                if (this._isInTile(localXY) && ($('#focus').val() == '' || this._data[i].tokens.indexOf($('#focus').val()) != -1) && ($('#show_label').val() == '' || this._data[i].label === $('#show_label').val())) {
+                if (this._isInTile(localXY) && ($('#focus').val() == '' || this._data[i].tokens.indexOf($('#focus').val()) != -1) && ($('#show_label').val() == '' || this._data[i].label === $('#show_label').val()) && ($('#show_sentiment').val() == '' || this._data[i].sentiment === $('#show_sentiment').val())) {
                     pointsInTile.push({
                         x: localXY.x,
                         y: localXY.y,

@@ -37,10 +37,11 @@
     (data) <- socket.on('tweet', _)
         tokens = data[1]
         label = data[2]
+        sentiment = data[3]
         #console.log(tokens)
         #txt = data[1]
         data = data[0]
-        heatmapLayer.addDataPoint({grp_lat: data[1], grp_lon: data[0], lat: data[3], lon: data[2], value: data[4], tokens: tokens, label: label});
+        heatmapLayer.addDataPoint({grp_lat: data[1], grp_lon: data[0], lat: data[3], lon: data[2], value: data[4], tokens: tokens, label: label, sentiment: sentiment});
     
     () <- setInterval(_, 100)
         heatmapLayer.redraw!

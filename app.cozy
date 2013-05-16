@@ -38,7 +38,7 @@ messages = []
 
     parts_msg = message.split("\t")
 
-    console.log("redis client channel " + channel + ": " + parts_msg[0] + ": " + parts_msg[2])
+    console.log("redis client channel " + channel + ": " + parts_msg[0] + ": " + parts_msg[2] + ": " + parts_msg[3])
 
     tokens = regex_tokenizer.tokenize(parts_msg[1].toLowerCase!)
     tokens = stopwords.stripStopWords(tokens)
@@ -50,7 +50,7 @@ messages = []
     #    token_scores.push({token: token, score: tfidf.tfidf(token, tfidf.documents.length - 1)})
 
     for socket in socket_clients
-        socket.emit('tweet', [parts_msg[0].split(':'), tokens, parts_msg[2]])
+        socket.emit('tweet', [parts_msg[0].split(':'), tokens, parts_msg[2], parts_msg[3]])
 
 
 compile = (str, path) ->

@@ -45,6 +45,11 @@ html(lang="zh-TW")
             option(value="talk.politics.mideast") talk.politics.mideast
             option(value="talk.politics.misc") talk.politics.misc
             option(value="talk.religion.misc") talk.religion.misc
+          h1.type Tweet sentiment type:
+          select(id="show_sentiment")
+            option(value="", selected) All sentiments
+            option(value="positive") positive tweets
+            option(value="negative") negative tweets
     footer
   script(src='/javascript/jquery-1.7.2.min.js', type='text/javascript')
   //script(src='http://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/2.3.0/bootstrap.min.js', type='text/javascript')
