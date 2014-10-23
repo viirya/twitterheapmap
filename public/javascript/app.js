@@ -2,22 +2,21 @@
 (function() {
 
   $(document).ready(function() {
-    var baseLayer, controls, heatmapLayer, map, overlayMaps, socket;
+    var baseLayer, cfg, controls, heatmapLayer, map, overlayMaps, socket;
     baseLayer = L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://cloudmade.com">CloudMade</a>',
       maxZoom: 18
     });
-    heatmapLayer = L.TileLayer.heatMap({
-      radius: 20,
-      opacity: 0.8,
-      gradient: {
-        0.45: "rgb(0,0,255)",
-        0.55: "rgb(0,255,255)",
-        0.65: "rgb(0,255,0)",
-        0.95: "yellow",
-        1.0: "rgb(255,0,0)"
-      }
-    });
+    cfg = {
+      radius: 2,
+      maxOpacity: .8,
+      scaleRadius: true,
+      useLocalExtrema: true,
+      latField: 'lat',
+      lngField: 'lon',
+      valueField: 'value'
+    };
+    heatmapLayer = new HeatmapOverlay(cfg);
     overlayMaps = {
       'Heatmap': heatmapLayer
     };
@@ -37,19 +36,19 @@
       label = data[2];
       sentiment = data[3];
       data = data[0];
-      return heatmapLayer.addDataPoint({
-        grp_lat: data[1],
-        grp_lon: data[0],
-        lat: data[3],
-        lon: data[2],
-        value: data[4],
+      return heatmapLayer.addData({
+        grp_lat: data[0],
+        grp_lon: data[1],
+        lat: parseFloat(data[2]),
+        lon: parseFloat(data[3]),
+        value: parseInt(data[4]),
         tokens: tokens,
         label: label,
         sentiment: sentiment
       });
     });
     setInterval(function() {
-      return heatmapLayer.redraw();
+      return heatmapLayer._draw();
     }, 100);
     return $('#show_label').change(function() {
       return console.log($(this).val());
