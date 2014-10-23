@@ -3,7 +3,7 @@
 
   $(document).ready(function() {
     var baseLayer, controls, heatmapLayer, map, overlayMaps, socket;
-    baseLayer = L.tileLayer('http://{s}.tile.cloudmade.com/ad132e106cd246ec961bbdfbe0228fe8/997/256/{z}/{x}/{y}.png', {
+    baseLayer = L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://cloudmade.com">CloudMade</a>',
       maxZoom: 18
     });
@@ -30,7 +30,7 @@
       layers: [baseLayer, heatmapLayer]
     });
     controls.addTo(map);
-    socket = io.connect('http://cml10.csie.ntu.edu.tw:8080');
+    socket = io.connect('http://cml13.csie.ntu.edu.tw:8081');
     socket.on('tweet', function(data) {
       var label, sentiment, tokens;
       tokens = data[1];
