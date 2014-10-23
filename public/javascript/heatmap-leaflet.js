@@ -31,13 +31,19 @@
                 tile: tile,
                 tilePoint: tilePoint,
                 zoom: zoom,
-                heatmap: tile.heatmap
+                heatmap: tile.heatmap,
+                canvas: tile['childNodes'][0],
             };
+
+            this._draw(ctx);
+
+            if (this._map.getZoom() >= 8) {
+                this._drawFreqTerms(ctx);
+            }
 
             if (this.options.debug) {
                 this._drawDebugInfo(ctx);
             }
-            this._draw(ctx);
         };
     },
 
@@ -46,6 +52,9 @@
     },
 
     addDataPoint: function(point) {
+        if (point.lat == 0.0 && point.lon == 0.0) {
+            return;
+        }
         var replace = false;
         if (this._data.length > 0) {
             for (var i = 0, l = this._data.length; i < l; i++) {
@@ -53,6 +62,11 @@
                     this._data[i].lat = point.lat;
                     this._data[i].lon = point.lon;
                     this._data[i].value = point.value;
+
+                    this._data[i].tokens = $.extend(this._data[i].tokens, point.tokens);
+
+                    this._data[i].label = point.label;
+                    this._data[i].sentiment = point.sentiment;
 
                     replace = true;
 
@@ -108,13 +122,36 @@
         return tile;
     },
 
+    _drawFreqTerms: function (ctx) {
+
+        this._getTokensInBound();
+        var top_tokens = this._getMaxFreqToken(($('#show_label').val() == '' && $('#show_sentiment').val() == '') ? 2 : 10);
+ 
+        var font_size = 40 * (this._map.getZoom() / 18);
+
+        var g = ctx.canvas.getContext('2d');
+        g.strokeStyle = '#000000';
+        g.fillStyle = '#000000';
+        g.font = font_size + "px Arial Bold";
+
+        for (var region in top_tokens) {
+            var lat = parseFloat(region.split(':')[0]);
+            var lon = parseFloat(region.split(':')[1]);
+            var lonlat = [lon, lat];
+            var localXY = this._tilePoint(ctx, lonlat);
+
+            var text = [];
+            top_tokens[region].forEach(function(token) {
+                text.push(token[0]);
+            });
+            if (text.length > 0) {
+                g.fillText('"' + text.join(',') + '"', localXY.x, localXY.y);
+            }
+        }
+    },
+
     _drawDebugInfo: function (ctx) {
-        var canvas = L.DomUtil.create('canvas', 'leaflet-tile-debug');
         var tileSize = this.options.tileSize;
-        canvas.width = tileSize;
-        canvas.height = tileSize;
-        ctx['tile'].appendChild(canvas);
-        ctx['canvas'] = canvas;
 
         var max = tileSize;
         var g = ctx.canvas.getContext('2d');
@@ -122,12 +159,12 @@
         g.fillStyle = '#FFFF00';
         g.strokeRect(0, 0, max, max);
         g.font = "12px Arial";
-        g.fillRect(0, 0, 5, 5);
+        g.fillRect(0, 0, 5, 5); // draw four rects in four corner
         g.fillRect(0, max - 5, 5, 5);
         g.fillRect(max - 5, 0, 5, 5);
         g.fillRect(max - 5, max - 5, 5, 5);
-        g.fillRect(max / 2 - 5, max / 2 - 5, 10, 10);
-        g.strokeText(ctx.tilePoint.x + ' ' + ctx.tilePoint.y + ' ' + ctx.zoom, max / 2 - 30, max / 2 - 10);
+        g.fillRect(max / 2 - 5, max / 2 - 5, 10, 10); // draw rect in center
+        g.fillText(ctx.tilePoint.x + ' ' + ctx.tilePoint.y + ' ' + ctx.zoom, max / 2 - 30, max / 2 - 10);
 
         this._drawPoint(ctx, [0,0])
     },
@@ -171,6 +208,46 @@
             bounds = this._cache.bounds[padding] = new L.Bounds(p1, p2);
         };
         return bounds.contains([localXY.x, localXY.y]);
+    },
+
+    _getTokensInBound: function() {
+        var dataset = new Object;
+        var mapBounds = this._map.getBounds();
+        this._data.forEach(function(item){
+            if (mapBounds.contains(new L.LatLng(item.lat, item.lon)) && ($('#focus').val() == '' || item.tokens.indexOf($('#focus').val()) != -1) && ($('#show_label').val() == '' || item.label === $('#show_label').val()) && ($('#show_sentiment').val() == '' || item.sentiment === $('#show_sentiment').val())) {
+                if (!(item.lat + ':' + item.lon in dataset)) {
+                    dataset[item.lat + ':' + item.lon] = new Object;
+                }
+                item.tokens.forEach(function(token) {
+                    dataset[item.lat + ':' + item.lon][token] = token in dataset ? dataset[item.lat + ':' + item.lon][token] + 1 : 1;
+                });
+            }
+        });
+        //console.log(dataset);
+        this._tokensinbound = dataset;
+        return dataset;
+    },
+
+    _getMaxFreqToken: function(maxNumber) {
+        var tuples = new Object;
+        if ("_tokensinbound" in this) {
+            for (var region in this._tokensinbound) {
+                tuples[region] = [];
+                for (var token in this._tokensinbound[region]) {
+                    tuples[region].push([token, this._tokensinbound[region][token]]);
+                }
+                if (tuples[region] !== []) {
+                    tuples[region].sort(function(a, b) {
+                        a = a[1];
+                        b = b[1];
+                    
+                        return a < b ? 1 : (a > b ? -1 : 0);
+                    });
+                    tuples[region] = tuples[region].slice(0, maxNumber);
+                }
+            }
+        }
+        return tuples;
     },
 
     // get the max value of the dataset
@@ -218,7 +295,8 @@
                 var lonlat = [this._data[i].lon, this._data[i].lat];
                 var localXY = this._tilePoint(ctx, lonlat);
 
-                if (this._isInTile(localXY)) {
+
+                if (this._isInTile(localXY) && ($('#focus').val() == '' || this._data[i].tokens.indexOf($('#focus').val()) != -1) && ($('#show_label').val() == '' || this._data[i].label === $('#show_label').val()) && ($('#show_sentiment').val() == '' || this._data[i].sentiment === $('#show_sentiment').val())) {
                     pointsInTile.push({
                         x: localXY.x,
                         y: localXY.y,
@@ -227,7 +305,6 @@
                 };
             }
         }
-
 
         heatmap.store.setDataSet({max: this._getMaxValue(), data: pointsInTile});
 

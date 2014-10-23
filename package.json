@@ -20,6 +20,7 @@
     "jade": "latest",
     "stylus": "latest",
     "nib": "latest",
+    "natural": "latest",
     "socket.io": "latest"
   },
   "devDependencies": {}

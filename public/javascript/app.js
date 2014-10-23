@@ -3,7 +3,7 @@
 
   $(document).ready(function() {
     var baseLayer, controls, heatmapLayer, map, overlayMaps, socket;
-    baseLayer = L.tileLayer('http://{s}.tile.cloudmade.com/ad132e106cd246ec961bbdfbe0228fe8/997/256/{z}/{x}/{y}.png', {
+    baseLayer = L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://cloudmade.com">CloudMade</a>',
       maxZoom: 18
     });
@@ -30,19 +30,30 @@
       layers: [baseLayer, heatmapLayer]
     });
     controls.addTo(map);
-    socket = io.connect('http://cml10.csie.ntu.edu.tw:8080');
+    socket = io.connect('http://cml13.csie.ntu.edu.tw:8081');
     socket.on('tweet', function(data) {
+      var label, sentiment, tokens;
+      tokens = data[1];
+      label = data[2];
+      sentiment = data[3];
+      data = data[0];
       return heatmapLayer.addDataPoint({
         grp_lat: data[1],
         grp_lon: data[0],
         lat: data[3],
         lon: data[2],
-        value: data[4]
+        value: data[4],
+        tokens: tokens,
+        label: label,
+        sentiment: sentiment
       });
     });
-    return setInterval(function() {
+    setInterval(function() {
       return heatmapLayer.redraw();
     }, 100);
+    return $('#show_label').change(function() {
+      return console.log($(this).val());
+    });
   });
 
 }).call(this);

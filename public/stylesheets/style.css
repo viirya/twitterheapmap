@@ -102,6 +102,7 @@ a img {
 body {
   background-color: #faf9f0;
   color: #444;
+  font-family: "Monaco", "Helvetica", "Times New Roman";
 }
 header {
   margin-bottom: 20px;
@@ -134,8 +135,34 @@ header span {
 .main-content p {
   margin-bottom: 20px;
 }
-.main-content .query {
+.main-content .title {
+  margin-bottom: 20px;
+  font-size: 30px;
+}
+.main-content p.desc {
+  font-size: 18px;
+}
+.main-content .terms {
+  height: 800px;
+}
+.main-content .terms h1.focus,
+.main-content .terms h1.type {
+  font-size: 22px;
+}
+.main-content .terms h1.focus {
+  margin: 0 0 10px 0;
+}
+.main-content .terms h1.type {
+  margin: 10px 0 10px 0;
+}
+.main-content .terms h1.freq {
+  margin: 20px 0 10px 0;
+  font-size: 22px;
+}
+.main-content .terms .toptokens {
+  margin: 10px;
   font-size: 20px;
+  display: block;
 }
 p {
   line-height: 1.8;
