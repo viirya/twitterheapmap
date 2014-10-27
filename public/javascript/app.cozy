@@ -42,8 +42,11 @@
         data = data[0]
         heatmapLayer.addData({grp_lat: data[0], grp_lon: data[1], lat: parseFloat(data[2]), lon: parseFloat(data[3]), value: parseInt(data[4]), tokens: tokens, label: label, sentiment: sentiment});
     
-    () <- setInterval(_, 100)
+    () <- setInterval(_, 1000)
         heatmapLayer._draw!
+
+    () <- setInterval(_, 5000)
+        heatmapLayer._decay!
 
     () <- $('#show_label').change!
         console.log($(this).val())
