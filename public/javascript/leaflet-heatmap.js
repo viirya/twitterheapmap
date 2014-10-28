@@ -67,6 +67,23 @@ var HeatmapOverlay = L.Layer.extend({
       -Math.round(point.y) + 'px)';
 
     this._update();
+  },   
+  _decay: function() {
+    if (this._data.length == 0) {
+      return;
+    }
+
+    var valueField = this.cfg.valueField;
+    var len = this._data.length;
+  
+    while (len--) {
+      var entry = this._data[len];
+      if (entry[valueField] > 0) {
+        entry[valueField]--;
+      } else {
+        this._data.splice(len, 1); 
+      }
+    }
   },
   _update: function() {
     var bounds, zoom, scale;
@@ -206,9 +223,11 @@ var HeatmapOverlay = L.Layer.extend({
         this._data.push(entry);
       }
 
+      /*
       if (this._data.length >= 2000) {
         this._data.shift();
       }
+      */
 
       this._max = Math.max(this._max, entry[valueField]);
       this._min = Math.min(this._min, entry[valueField]);
@@ -217,7 +236,7 @@ var HeatmapOverlay = L.Layer.extend({
         dataObj.radius = entry.radius;
       }
 
-      this._draw();
+      //this._draw();
     }
   },
   _resetOrigin: function () {

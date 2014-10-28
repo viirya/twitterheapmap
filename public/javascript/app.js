@@ -49,7 +49,10 @@
     });
     setInterval(function() {
       return heatmapLayer._draw();
-    }, 100);
+    }, 1000);
+    setInterval(function() {
+      return heatmapLayer._decay();
+    }, 10000);
     return $('#show_label').change(function() {
       return console.log($(this).val());
     });
