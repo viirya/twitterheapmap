@@ -45,7 +45,7 @@
     () <- setInterval(_, 1000)
         heatmapLayer._draw!
 
-    () <- setInterval(_, 5000)
+    () <- setInterval(_, 10000)
         heatmapLayer._decay!
 
     () <- $('#show_label').change!
